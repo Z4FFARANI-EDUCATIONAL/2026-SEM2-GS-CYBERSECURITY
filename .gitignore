@@ -1,0 +1,20 @@
+# Segredos: nunca versionar
+.env
+.env.*
+!.env.example
+
+# Dados e registros gerados em tempo de execução
+dados/
+logs/
+auditoria/saida/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Sistema
+.DS_Store
+Thumbs.db

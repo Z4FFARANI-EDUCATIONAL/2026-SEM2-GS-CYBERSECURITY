@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AJA · Painel de Risco Cidadão</title>
+  <link rel="icon" href="logo.png">
+  <link rel="stylesheet" href="painel.css">
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <div class="marca">
+      <img src="logo.png" alt="AJA" class="logo">
+      <div>
+        <p class="sobretitulo">Segurança dos seus dados</p>
+        <h1>Painel de Risco Cidadão</h1>
+      </div>
+    </div>
+    <div class="topo-direita">
+      <span id="estado-ia" class="selo" role="status">Verificando tradutor…</span>
+      <span id="usuario" class="usuario" hidden></span>
+      <button id="sair" class="botao botao-secundario" type="button" hidden>Sair</button>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- Entrada -->
+    <section id="tela-login" class="tela" aria-labelledby="titulo-login">
+      <form id="form-login" class="cartao cartao-login" novalidate>
+        <h2 id="titulo-login">Entrar</h2>
+        <p class="ajuda">Cidadãos veem os próprios alertas. A equipe do AJA vê a visão executiva.</p>
+        <label for="login">CPF ou e-mail</label>
+        <input id="login" name="login" autocomplete="username" required>
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+        <p id="erro-login" class="erro" role="alert" hidden></p>
+        <button class="botao" type="submit">Entrar</button>
+      </form>
+    </section>
+
+    <!-- Painel -->
+    <section id="tela-painel" class="tela" hidden>
+      <div class="grade-topo">
+        <article class="cartao cartao-farol" aria-labelledby="titulo-farol">
+          <h2 id="titulo-farol" class="rotulo-secao">Risco Cidadão</h2>
+          <div class="farol-linha">
+            <div class="farol" aria-hidden="true">
+              <span class="luz luz-vermelho"></span>
+              <span class="luz luz-amarelo"></span>
+              <span class="luz luz-verde"></span>
+            </div>
+            <div class="farol-texto" role="status" aria-live="polite">
+              <p id="nivel-rotulo" class="nivel-rotulo">…</p>
+              <p class="indice"><span id="indice">0</span><span class="indice-max"> / 100</span></p>
+              <p id="nivel-resumo" class="nivel-resumo"></p>
+            </div>
+          </div>
+          <p class="nota">Índice dos últimos <span id="janela">10</span> minutos. Dados de saúde pesam mais.</p>
+        </article>
+
+        <article class="cartao cartao-mensagem" aria-labelledby="titulo-mensagem">
+          <div class="cabecalho-cartao">
+            <h2 id="titulo-mensagem" class="rotulo-secao">Mensagem mais recente</h2>
+            <button id="ouvir" class="botao botao-secundario" type="button" disabled>Ouvir mensagem</button>
+          </div>
+          <div id="mensagem-recente" aria-live="polite">
+            <p class="vazio">Nenhum alerta até agora. Seus dados estão protegidos.</p>
+          </div>
+        </article>
+      </div>
+
+      <section id="executivo" class="executivo" hidden aria-labelledby="titulo-exec">
+        <div class="cabecalho-secao">
+          <h2 id="titulo-exec">Visão executiva</h2>
+          <button id="reiniciar" class="botao botao-secundario" type="button">Reiniciar demonstração</button>
+        </div>
+        <div id="kpis" class="kpis"></div>
+        <div class="grade-graficos">
+          <article class="cartao">
+            <h3 class="rotulo-secao">Evolução do índice</h3>
+            <div id="grafico-serie" class="grafico-serie"></div>
+          </article>
+          <article class="cartao">
+            <h3 class="rotulo-secao">Bloqueios por tipo</h3>
+            <div id="por-tipo" class="barras"></div>
+          </article>
+          <article class="cartao">
+            <h3 class="rotulo-secao">Por saída protegida</h3>
+            <div id="por-sink" class="barras"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="cartao" aria-labelledby="titulo-historico">
+        <h2 id="titulo-historico" class="rotulo-secao">Histórico de alertas</h2>
+        <ol id="alertas" class="alertas"></ol>
+      </section>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    AJA · Global Solution 2026.2 · FIAP. Todos os dados exibidos são fictícios.
+  </footer>
+
+  <!-- VLibras: tradução para Libras do Governo Federal -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+  <script src="painel.js" defer></script>
+</body>
+</html>
