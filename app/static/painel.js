@@ -137,12 +137,14 @@ function renderMensagem(evento) {
   if (estado.ultimoId === chave) return; // evita reler a mesma mensagem no leitor de tela
   estado.ultimoId = chave;
   const texto = evento.mensagem || "Analisando o que aconteceu…";
-  alvo.replaceChildren(
+  const origem = { ia: "texto explicado por IA", padrao: "texto padrão do sistema", pendente: "explicando com IA…" };
+  // replaceChildren escreveria "null" como texto: os itens opcionais são filtrados antes.
+  alvo.replaceChildren(...[
     el("p", { classe: "mensagem-titulo" }, evento.titulo),
     el("p", { classe: "mensagem-texto" }, texto),
     evento.o_que_fazer ? el("p", { classe: "mensagem-acao" }, `O que fazer: ${evento.o_que_fazer}`) : null,
-    el("span", { classe: "origem" }, `${hora(evento.criado_em)} · ${evento.origem_mensagem === "ia" ? "texto explicado por IA" : "texto padrão do sistema"}`),
-  );
+    el("span", { classe: "origem" }, `${hora(evento.criado_em)} · ${origem[evento.origem_mensagem] || origem.padrao}`),
+  ].filter(Boolean));
   estado.ultimaMensagem = evento.mensagem ? `${evento.titulo}. ${evento.mensagem} ${evento.o_que_fazer || ""}` : null;
   ouvir.disabled = !estado.ultimaMensagem;
 }
