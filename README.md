@@ -132,15 +132,56 @@ cache. Se a API falhar, o sistema usa uma mensagem padrão, sinalizada como tal 
 
 ### Dashboard de Risco Cidadão — [`app/static/`](app/static)
 
-- **Farol verde / amarelo / vermelho** com o índice de 0 a 100 dos últimos 10 minutos. Cada evento soma
-  um peso que diminui com o tempo; dados de saúde pesam 1,5×; três acessos bloqueados ou ataques de
-  senha contra a mesma pessoa somam um adicional ([`risco.py`](app/seguranca/risco.py)).
-- **Visão do cidadão:** só os próprios alertas, com a mensagem da IA e o que fazer.
+O enunciado pede que a mensagem traduzida pela IA apareça num painel com um **indicador visual de
+risco**, e dá como exemplo um farol verde, amarelo e vermelho. É o critério “Dashboard Executivo (Risco
+Cidadão)”, que vale 2 pontos. O painel tem duas visões:
+
+- **Visão do cidadão:** cada pessoa vê só os alertas que envolvem os próprios dados, com a mensagem da
+  IA e o que fazer.
 - **Visão executiva (equipe AJA):** índice geral, indicadores, evolução do índice, bloqueios por tipo e
   por saída, detalhe técnico e remediação sugerida pela IA.
-- **Acessível:** cor nunca é a única pista (o nível também aparece em texto), `aria-live` para leitor
-  de tela, botão "Ouvir mensagem" (síntese de voz) e o widget **VLibras** para Libras.
-- Todo texto vindo da API entra na página por `textContent`, nunca por `innerHTML`, o que evita XSS.
+
+#### Como ler o farol
+
+O farol **não conta pedidos nem relatos**. Ele mede **eventos de segurança**: cada vez que uma guarda
+precisou esconder ou bloquear um dado pessoal, ou percebeu uma tentativa de ataque.
+
+- **Quem vê o quê:** na visão do cidadão, o farol considera só os eventos com os dados daquela pessoa;
+  na visão executiva, considera todos os eventos do sistema. Cada cidadão tem o seu farol.
+- **Como o índice (0 a 100) é calculado:** cada evento soma um peso, que diminui em linha reta até zerar
+  em 10 minutos. Por isso o índice funciona como a “temperatura” do momento, e não como um placar
+  acumulado: se as tentativas param, o farol volta sozinho para o verde.
+
+| Evento | Peso | Com dado de saúde (×1,5) |
+|---|---|---|
+| Dado pessoal escondido num relato público | 5 | 7,5 |
+| Log que tentou gravar dado pessoal | 12 | 18 |
+| Erro que repetiria dado pessoal na tela | 12 | 18 |
+| Dado pessoal retirado do dossiê ou do prompt da IA | 15 | 22,5 |
+| Acesso aos dados de alguém sem permissão | 25 | 37,5 |
+| Tentativa de gravar dado sem criptografia | 30 | 45 |
+| Muitas tentativas de senha seguidas | 35 | 52,5 |
+| **Padrão de ataque** (3 ou mais acessos bloqueados ou ataques de senha contra a mesma pessoa) | +40 | — |
+
+| Faixa | Nível | O que significa |
+|---|---|---|
+| 0 a 29 | 🟢 Risco baixo | nenhuma ameaça ativa, ou só mascaramentos de rotina |
+| 30 a 69 | 🟡 Atenção | o sistema barrou situações que poderiam expor dados |
+| 70 a 100 | 🔴 Risco alto | tentativas repetidas de acesso indevido; as proteções estão segurando |
+
+**Exemplo:** alguém tenta duas vezes ver o perfil da Joana, que tem dado de saúde, sem permissão:
+2 × 37,5 = 75, e o farol dela fica vermelho. Cinco minutos depois, sem novas tentativas, o índice cai
+para cerca de 37 (amarelo); em dez minutos, volta ao verde. Vermelho não quer dizer que algo vazou: quer
+dizer que alguém está tentando, e as guardas estão bloqueando. O cálculo está em
+[`app/seguranca/risco.py`](app/seguranca/risco.py) e o próprio painel mostra a legenda das faixas.
+
+#### Acessibilidade e segurança da tela
+
+- A cor nunca é a única pista: o nível também aparece em texto e em número, com a legenda das faixas.
+- `aria-live` anuncia os alertas novos ao leitor de tela; o botão “Ouvir mensagem” lê o alerta em voz
+  alta; o widget **VLibras** traduz para Libras.
+- Todo texto vindo da API, inclusive o gerado pela IA, entra na página por `textContent`, nunca por
+  `innerHTML`, o que evita XSS.
 
 ## Como executar
 

@@ -111,7 +111,10 @@ function renderFarol(risco) {
   document.getElementById("nivel-rotulo").textContent = risco.rotulo;
   document.getElementById("indice").textContent = risco.indice;
   document.getElementById("nivel-resumo").textContent = risco.resumo;
-  document.getElementById("janela").textContent = risco.janela_min;
+  // O que o farol conta depende de quem está vendo: o cidadão vê só os eventos dos próprios dados.
+  const quem = estado.perfil === "gestor" ? "Todos os eventos de segurança do sistema" : "Só os eventos que envolvem os seus dados";
+  document.getElementById("escopo-farol").textContent =
+    `${quem}, nos últimos ${risco.janela_min} minutos. Cada bloqueio soma pontos, que caem com o tempo; dados de saúde pesam mais.`;
 }
 
 function etiquetas(evento) {
