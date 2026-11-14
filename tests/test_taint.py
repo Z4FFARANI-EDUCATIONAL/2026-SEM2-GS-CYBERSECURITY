@@ -147,3 +147,9 @@ def test_cpf_na_query_string_e_marcado_como_source(cidadaos, cliente):
     r = cliente.get("/api/v1/cidadaos/busca", params={"cpf": CARLOS["cpf"]}, headers=gestor)
     assert r.status_code == 200 and r.json()["encontrado"] is True
     assert CARLOS["cpf"] not in r.text
+
+
+def test_documentacao_da_api_abre_sem_login(cliente):
+    """Os exemplos do Swagger não podem ter formato de dado pessoal, senão a guarda bloqueia /openapi.json."""
+    r = cliente.get("/openapi.json")
+    assert r.status_code == 200 and "paths" in r.json()

@@ -30,14 +30,16 @@ COLUNAS_PROTEGIDAS = {
 
 
 class CadastroCidadao(BaseModel):
+    # Os exemplos da documentação não têm formato de dado real: o próprio openapi.json passa pela
+    # guarda de resposta, e um CPF de exemplo bloquearia o Swagger para quem não está logado.
     model_config = ConfigDict(json_schema_extra={"example": {
-        "nome": "Joana Exemplo da Silva",
-        "cpf": "529.982.247-25",
-        "email": "joana.exemplo@example.com",
-        "senha": "Calcada#Segura2026",
-        "telefone": "(11) 90000-0001",
-        "deficiencia": "baixa visão",
-        "endereco_residencial": "Rua Fictícia das Acácias, 120",
+        "nome": "Nome completo do cidadão",
+        "cpf": "CPF com 11 dígitos",
+        "email": "e-mail do cidadão",
+        "senha": "senha com 8 ou mais caracteres",
+        "telefone": "celular com DDD (opcional)",
+        "deficiencia": "baixa visão (opcional)",
+        "endereco_residencial": "rua e número da casa (opcional)",
     }})
 
     nome: str = Field(min_length=3, max_length=120)
