@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS eventos (
     sink TEXT NOT NULL,
     rota TEXT,
     categorias TEXT NOT NULL,
+    tipos_de_dado TEXT NOT NULL DEFAULT '[]',
     sensivel INTEGER NOT NULL,
     decisao TEXT NOT NULL,
     detalhe_tecnico TEXT NOT NULL,

@@ -10,7 +10,7 @@ const ROTULO_SINK = {
   llm: "Envio à IA", login: "Tela de login",
 };
 const ROTULO_CATEGORIA = {
-  identificacao: "Documento", credencial: "Senha ou chave", saude: "Saúde",
+  identificacao: "Identificação", credencial: "Senha ou chave", saude: "Saúde",
   contato: "Contato", localizacao: "Endereço",
 };
 

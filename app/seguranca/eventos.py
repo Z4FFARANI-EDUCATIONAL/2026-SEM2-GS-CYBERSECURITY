@@ -89,6 +89,7 @@ def registrar(
     marcador = registrando.set(True)
     try:
         cats = sorted(set(categorias(deteccoes)) | set(categorias_extra))
+        tipos_de_dado = sorted({d.regra.nome for d in deteccoes})
         if sensivel is None:
             sensivel = any(d.regra.sensivel for d in deteccoes) or "saude" in cats
         ctx = atual()
@@ -96,9 +97,10 @@ def registrar(
             rota = f"{ctx.metodo} {ctx.rota}"
         peso = TIPOS[tipo].peso * (FATOR_SENSIVEL if sensivel else 1.0)
         evento_id = banco.executar(
-            "INSERT INTO eventos (criado_em, tipo, sink, rota, categorias, sensivel, decisao, "
-            "detalhe_tecnico, titular_id, peso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO eventos (criado_em, tipo, sink, rota, categorias, tipos_de_dado, sensivel, decisao, "
+            "detalhe_tecnico, titular_id, peso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (time.time(), tipo, sink, motor.mascarar_texto(rota or "-"), json.dumps(cats),
+             json.dumps(tipos_de_dado, ensure_ascii=False),
              int(sensivel), decisao, _texto_seguro(detalhe), titular_id, peso),
             verificar=False,  # o conteúdo acabou de ser saneado acima
         )
@@ -133,6 +135,7 @@ def listar(desde: float | None = None, titular_id: int | None = None, limite: in
 def _formatar(linha: dict) -> dict:
     evento = dict(linha)
     evento["categorias"] = json.loads(evento["categorias"])
+    evento["tipos_de_dado"] = json.loads(evento.get("tipos_de_dado") or "[]")
     evento["sensivel"] = bool(evento["sensivel"])
     evento["remediacao"] = json.loads(evento["remediacao"]) if evento.get("remediacao") else []
     evento["titulo"] = TIPOS[evento["tipo"]].titulo

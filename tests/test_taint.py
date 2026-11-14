@@ -104,7 +104,7 @@ def test_nada_em_texto_claro_no_banco_depois_do_cadastro(cidadaos):
         assert not any(v in conteudo for v in VALORES_PROIBIDOS)
 
 
-def test_relato_publico_mascara_autor_e_pessoa_citada(cidadaos, cliente):
+def test_relato_publico_mascara_autor_e_pessoa_citada(cidadaos, cliente, llm):
     r1 = cliente.post("/api/v1/relatos", headers=cidadaos["joana_h"], json={
         "descricao": "Sou cega, me liga no (11) 90000-0001. Joana Exemplo da Silva",
         "categoria": "piso_tatil", "local_referencia": LOCAL, "publico_afetado": "visual"})
@@ -115,6 +115,8 @@ def test_relato_publico_mascara_autor_e_pessoa_citada(cidadaos, cliente):
         "categoria": "piso_tatil", "local_referencia": LOCAL, "publico_afetado": "visual"})
     texto2 = r2.json()["descricao_publicada"]
     assert "Joana Silva" not in texto2 and "pessoas cegas" in texto2
+    # O prompt diz o tipo exato do dado, para a IA não chamar um nome de "documento"
+    assert "Tipo de dado envolvido: nome completo" in llm.prompts[-1]
 
 
 def test_dossie_nao_identifica_quem_relatou(cidadaos, cliente):

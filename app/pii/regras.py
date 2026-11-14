@@ -37,7 +37,7 @@ class Tratamento(str, Enum):
 
 
 ROTULO_CATEGORIA = {
-    Categoria.IDENTIFICACAO: "documento de identificação",
+    Categoria.IDENTIFICACAO: "dado de identificação (nome ou documento)",
     Categoria.CREDENCIAL: "senha ou chave de acesso",
     Categoria.SAUDE: "informação de saúde",
     Categoria.CONTATO: "contato pessoal",

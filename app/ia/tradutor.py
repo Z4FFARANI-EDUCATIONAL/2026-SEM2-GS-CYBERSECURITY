@@ -174,7 +174,10 @@ def descrever_acao(rota: str | None) -> str:
 
 def montar_prompt(evento: dict) -> str:
     tipo_sink = evento["sink"].split(":")[0]
-    dados = ", ".join(ROTULO_CATEGORIA[Categoria(c)] for c in evento["categorias"]) or "nenhum dado pessoal"
+    # O tipo exato ("Nome completo", "CPF") evita que a IA chame um nome de "documento".
+    dados = (", ".join(t.lower() for t in evento.get("tipos_de_dado", []))
+             or ", ".join(ROTULO_CATEGORIA[Categoria(c)] for c in evento["categorias"])
+             or "nenhum dado pessoal")
     from app.seguranca.eventos import TIPOS
 
     return (
@@ -193,6 +196,7 @@ def montar_prompt(evento: dict) -> str:
 
 def _chave_cache(evento: dict, modelo: str) -> str:
     base = json.dumps([modelo, evento["tipo"], evento["sink"].split(":")[0], evento["categorias"],
+                       evento.get("tipos_de_dado", []),
                        evento["sensivel"], evento["decisao"], evento["detalhe_tecnico"],
                        descrever_acao(evento.get("rota")), bool(evento.get("titular_id")), SISTEMA], ensure_ascii=False)
     return hashlib.sha256(base.encode("utf-8")).hexdigest()
