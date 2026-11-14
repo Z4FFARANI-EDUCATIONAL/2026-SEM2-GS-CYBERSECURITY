@@ -46,6 +46,12 @@ documento enviado à Prefeitura.
 Uma API do AJA em **Python + FastAPI** (cadastro, login, relatos, tópicos e dossiê) com um módulo de
 segurança que cobre as três partes da missão técnica e o dashboard.
 
+| Entregável | Onde |
+|---|---|
+| Código-fonte | este repositório |
+| Auditoria do protótipo | [`auditoria/RELATORIO_AUDITORIA.md`](auditoria/RELATORIO_AUDITORIA.md) |
+| Vídeo do dashboard | [youtu.be/2f9h9YCno48](https://youtu.be/2f9h9YCno48) |
+
 ```
  requisição ──► [1] Motor de PII ──► marca cada dado pessoal no contexto de taint (source)
                                               │
