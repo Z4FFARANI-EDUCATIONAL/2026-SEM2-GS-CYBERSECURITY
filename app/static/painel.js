@@ -210,25 +210,25 @@ function renderSerie(serie) {
     const r = document.createElementNS(ns, "rect");
     r.setAttribute("x", m.e); r.setAttribute("width", L - m.e - m.d);
     r.setAttribute("y", y(ate)); r.setAttribute("height", y(de) - y(ate));
-    r.setAttribute("fill", cor); r.setAttribute("opacity", "0.10");
+    r.setAttribute("fill", cor); r.setAttribute("opacity", "0.07");
     svg.append(r);
   };
-  faixa(0, 30, "#2FBF71"); faixa(30, 70, "#F5C542"); faixa(70, 100, "#F0524F");
+  faixa(0, 30, "#4FAE7C"); faixa(30, 70, "#D8B455"); faixa(70, 100, "#D5675F");
   for (const v of [0, 30, 70, 100]) {
     const t = document.createElementNS(ns, "text");
     t.setAttribute("x", 4); t.setAttribute("y", y(v) + 4);
-    t.setAttribute("fill", "#B4C3E0"); t.setAttribute("font-size", "11");
+    t.setAttribute("fill", "#A2A8B3"); t.setAttribute("font-size", "11");
     t.textContent = v;
     svg.append(t);
   }
   const linha = document.createElementNS(ns, "polyline");
   linha.setAttribute("points", serie.map((p, i) => `${x(i)},${y(p.indice)}`).join(" "));
-  linha.setAttribute("fill", "none"); linha.setAttribute("stroke", "#8DB5FA");
+  linha.setAttribute("fill", "none"); linha.setAttribute("stroke", "#93AEDB");
   linha.setAttribute("stroke-width", "3"); linha.setAttribute("stroke-linejoin", "round");
   svg.append(linha);
   const legenda = document.createElementNS(ns, "text");
   legenda.setAttribute("x", L - m.d); legenda.setAttribute("y", A - 4); legenda.setAttribute("text-anchor", "end");
-  legenda.setAttribute("fill", "#B4C3E0"); legenda.setAttribute("font-size", "11");
+  legenda.setAttribute("fill", "#A2A8B3"); legenda.setAttribute("font-size", "11");
   legenda.textContent = "agora";
   svg.append(legenda);
   document.getElementById("grafico-serie").replaceChildren(svg);
