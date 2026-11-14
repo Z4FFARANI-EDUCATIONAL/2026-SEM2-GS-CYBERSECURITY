@@ -55,6 +55,14 @@ def test_farol_verde_amarelo_vermelho():
     assert resultado["nivel"] == "vermelho" and resultado["padrao_de_ataque"]
 
 
+def test_eventos_de_rotina_sozinhos_nao_passam_do_amarelo():
+    agora = 10_000.0
+    rotina = [_evento("LOG_BLOQUEADO", 18, 0)] * 10   # 180 pontos de rotina
+    assert risco.calcular(rotina, 10, agora)["indice"] == 69
+    com_ataque = rotina + [_evento("RESPOSTA_BLOQUEADA", 25, 0)]
+    assert risco.calcular(com_ataque, 10, agora)["nivel"] == "vermelho"
+
+
 def test_peso_cai_com_o_tempo_e_some_apos_a_janela():
     agora = 10_000.0
     novo = risco.calcular([_evento("LOG_BLOQUEADO", 40, 0)], 10, agora)["indice"]

@@ -133,8 +133,8 @@ cache. Se a API falhar, o sistema usa uma mensagem padrão, sinalizada como tal 
 ### Dashboard de Risco Cidadão — [`app/static/`](app/static)
 
 O enunciado pede que a mensagem traduzida pela IA apareça num painel com um **indicador visual de
-risco**, e dá como exemplo um farol verde, amarelo e vermelho. É o critério “Dashboard Executivo (Risco
-Cidadão)”, que vale 2 pontos. O painel tem duas visões:
+risco**, e dá como exemplo um farol verde, amarelo e vermelho. Corresponde ao critério “Dashboard Executivo (Risco
+Cidadão)”. O painel tem duas visões:
 
 - **Visão do cidadão:** cada pessoa vê só os alertas que envolvem os próprios dados, com a mensagem da
   IA e o que fazer.
@@ -151,6 +151,10 @@ precisou esconder ou bloquear um dado pessoal, ou percebeu uma tentativa de ataq
 - **Como o índice (0 a 100) é calculado:** cada evento soma um peso, que diminui em linha reta até zerar
   em 10 minutos. Por isso o índice funciona como a “temperatura” do momento, e não como um placar
   acumulado: se as tentativas param, o farol volta sozinho para o verde.
+- **Rotina × ataque:** eventos de rotina (dado mascarado no log, no erro, no relato, no dossiê ou no
+  prompt; gravação insegura impedida) mostram que o sistema barrou um vazamento e, sozinhos, levam no
+  máximo ao amarelo (69). Só tentativas de ataque (acesso sem permissão, senhas erradas em sequência)
+  levam ao vermelho.
 
 | Evento | Peso | Com dado de saúde (×1,5) |
 |---|---|---|

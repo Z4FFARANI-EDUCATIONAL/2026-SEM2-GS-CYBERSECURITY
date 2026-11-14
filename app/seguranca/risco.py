@@ -1,8 +1,12 @@
 """Indicador de Risco Cidadão (0 a 100) e o farol verde / amarelo / vermelho.
 
 Cada evento soma o seu peso (maior para dados de saúde), e esse peso cai em linha reta até zero ao
-fim da janela (10 minutos por padrão). Um padrão de ataque (três ou mais acessos bloqueados ou
-tentativas de senha contra o mesmo cidadão na janela) soma um adicional.
+fim da janela (10 minutos por padrão).
+
+- **Eventos de rotina** (dado mascarado no log, no erro, no relato, no dossiê ou no prompt; gravação
+  insegura impedida) mostram que o sistema barrou um vazamento. Sozinhos, levam no máximo ao amarelo.
+- **Tentativas de ataque** (acesso aos dados de alguém sem permissão, muitas senhas erradas) são as
+  únicas que levam ao vermelho. Três ou mais contra a mesma pessoa somam um adicional.
 """
 
 from __future__ import annotations
@@ -42,7 +46,7 @@ def nivel_do_indice(indice: float) -> str:
 def calcular(eventos: list[dict], janela_min: float, agora: float | None = None) -> dict:
     agora = time.time() if agora is None else agora
     janela = janela_min * 60
-    soma = 0.0
+    rotina, ataque = 0.0, 0.0
     ataques: Counter = Counter()
     considerados = 0
     for evento in eventos:
@@ -50,10 +54,14 @@ def calcular(eventos: list[dict], janela_min: float, agora: float | None = None)
         if idade < 0 or idade > janela:
             continue
         considerados += 1
-        soma += evento["peso"] * (1 - idade / janela)
+        peso = evento["peso"] * (1 - idade / janela)
         if evento["tipo"] in TIPOS_DE_ATAQUE:
+            ataque += peso
             ataques[evento.get("titular_id")] += 1
+        else:
+            rotina += peso
     padrao_de_ataque = any(qtd >= 3 for qtd in ataques.values())
+    soma = min(rotina, LIMITE_VERMELHO - 1) + ataque  # rotina sozinha não passa do amarelo
     if padrao_de_ataque:
         soma += ADICIONAL_ATAQUE
     indice = min(100, round(soma))
