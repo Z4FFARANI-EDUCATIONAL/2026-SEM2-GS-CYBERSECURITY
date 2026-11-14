@@ -235,7 +235,7 @@ claro. O resultado completo, com as evidências de cada cenário, está em
 python -m pytest -q
 ```
 
-34 testes cobrem o motor de PII, cada guarda de taint, a tradução via IA (com um LLM falso, sem rede)
+35 testes cobrem o motor de PII, cada guarda de taint, a tradução via IA (com um LLM falso, sem rede)
 e o cálculo do índice de risco.
 
 ## Decisões de segurança

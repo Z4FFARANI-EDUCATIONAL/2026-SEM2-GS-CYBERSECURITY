@@ -1,6 +1,6 @@
 # Relatório de auditoria do protótipo
 
-Gerado em 14/11/2026 03:48:17 por `python -m auditoria.simular_ataques`.
+Gerado em 14/11/2026 05:20:27 por `python -m auditoria.simular_ataques`.
 Todos os dados usados são fictícios (ver `auditoria/dados_sinteticos.py`).
 
 **Resultado: 11 de 11 cenários aprovados.**
@@ -53,13 +53,13 @@ O script procurou 14 valores pessoais fictícios (CPF com e sem pontuação, e-m
 
 ```
 Linha gravada no log:
-2026-11-14 03:48:03,301 INFO    aja.cidadaos | Novo cadastro recebido: {'nome': 'J. E. S.', 'cpf': '***.982.***-25', 'email': 'j***@e***.com', 'senha': '[senha removida]', 'telefone': '(**) *****-**01', 'rg': None, 'data_nascimento': None, 'deficiencia': '[informação de saúde protegida]', 'endereco_residencial': '[endereço residencial protegido]'}  [guarda de taint: dado pessoal bloqueado neste log]
+2026-11-14 05:20:22,084 INFO    aja.cidadaos | Novo cadastro recebido: {'nome': 'J. E. S.', 'cpf': '***.982.***-25', 'email': 'j***@e***.com', 'senha': '[senha removida]', 'telefone': '(**) *****-**01', 'rg': None, 'data_nascimento': None, 'deficiencia': '[informação de saúde protegida]', 'endereco_residencial': '[endereço residencial protegido]'}  [guarda de taint: dado pessoal bloqueado neste log]
 ```
 
 ```
 Resposta HTTP:
 {
-  "id": 2,
+  "id": 4,
   "nome": "J. E. S.",
   "cpf": "***.982.***-25",
   "email": "j***@e***.com",
@@ -85,7 +85,7 @@ Resposta HTTP:
       "problema": "Value error, CPF inválido"
     }
   ],
-  "evento_id": 3
+  "evento_id": 15
 }
 ```
 
@@ -98,7 +98,7 @@ Resposta HTTP:
 
 ```
 Linha de acesso gravada:
-2026-11-14 03:48:03,716 INFO    uvicorn.access | 127.0.0.1:44680 - "GET /api/v1/cidadaos/busca?cpf=***.982.***-25 HTTP/1.1" 200
+2026-11-14 05:20:22,513 INFO    uvicorn.access | 127.0.0.1:59356 - "GET /api/v1/cidadaos/busca?cpf=***.982.***-25 HTTP/1.1" 200
 ```
 
 ### C04 · Relato público com CPF, telefone, autodeclaração de saúde e assinatura
@@ -147,7 +147,7 @@ Resposta HTTP:
 {
   "erro": "acesso_bloqueado",
   "mensagem": "Esta resposta continha dados pessoais que você não tem permissão para ver. O acesso foi bloqueado e registrado.",
-  "evento_id": 7
+  "evento_id": 19
 }
 ```
 
@@ -163,7 +163,7 @@ Resposta HTTP:
 {
   "erro": "acesso_bloqueado",
   "mensagem": "Esta resposta continha dados pessoais que você não tem permissão para ver. O acesso foi bloqueado e registrado.",
-  "evento_id": 8
+  "evento_id": 20
 }
 ```
 
@@ -186,7 +186,7 @@ Resposta HTTP:
 {
   "erro": "gravacao_bloqueada",
   "mensagem": "O sistema impediu que um dado pessoal fosse guardado sem proteção.",
-  "evento_id": 9
+  "evento_id": 21
 }
 ```
 
