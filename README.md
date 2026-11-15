@@ -2,9 +2,9 @@
 
 | Integrante | RM |
 |---|---|
-| Guilherme Santos Nunes | RM558989 |
-| Kaique Rodrigues Zaffarani | RM556677 |
-| Pedro Josué Pereira Almeida | RM554913 |
+| [Guilherme Santos Nunes](https://github.com/sannunez) | RM558989 |
+| [Kaique Zaffarani](https://github.com/Z4ffarani) | RM556677 |
+| [Pedro Josué Pereira Almeida](https://github.com/Pedro-Josue) | RM554913 |
 
 Global Solution 2026.2 · CitizenTech · Engenharia de Software · FIAP
 
