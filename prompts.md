@@ -1,116 +1,127 @@
 # Prompts usados com IA
 
-Registro dos pedidos feitos ao assistente de IA (Claude, da Anthropic) durante o desenvolvimento desta
-entrega, como pede o briefing da Global Solution. Os pedidos estão resumidos e reescritos por etapa, na
-ordem do trabalho, com o que resultou de cada um. As decisões de escopo, revisão e aprovação foram da
-equipe.
+Registro do uso de IA como copiloto nesta entrega, como pede o briefing da Global Solution. O
+desenvolvimento foi híbrido: a equipe e a ferramenta trabalharam juntas, em idas e vindas, por isso as
+etapas abaixo não separam com exatidão o que veio de cada lado. Os objetivos aparecem resumidos por
+etapa, na ordem do trabalho, com o resultado alcançado. As decisões de escopo, revisão e aprovação
+foram da equipe.
 
-Os prompts que o próprio sistema envia ao Claude em tempo de execução (tradução dos eventos de
-segurança) não fazem parte deste registro: eles estão no código, em
+Os prompts que o próprio sistema envia ao LLM em tempo de execução, para traduzir os eventos de
+segurança, não fazem parte deste registro: eles estão no código, em
 [`app/ia/tradutor.py`](app/ia/tradutor.py).
 
 ---
 
 ## 1. Entender a tarefa
 
-**Pedido:** ler o briefing da GS e o documento adicional do professor de Cybersecurity e apontar o que
-mudou em relação ao enunciado original.
+**Objetivo:** ler o briefing da GS e o documento adicional de Cybersecurity e identificar o que mudou
+em relação ao enunciado original.
 
-**Resultado:** o adicional não remove nenhum item; detalha os três pontos (parsing de PII, taint analysis
-e tradução via IA) e muda o formato de entrega para um PDF de documentação e um link do GitHub,
-enviados separadamente.
+**Resultado:** o documento adicional não remove nenhum item. Ele detalha as três partes da missão
+técnica (parsing de PII, taint analysis e tradução via IA) e muda o formato de entrega para dois envios
+separados: um PDF de documentação e o link do repositório no GitHub.
 
-**Pedido:** confirmar o entendimento: um middleware que identifica PII na entrada, o taint analysis
-acompanhando o dado até as saídas e um LLM que gera uma mensagem de segurança para o usuário no
-dashboard.
+**Objetivo:** confirmar o entendimento da missão: um middleware que identifica PII na entrada, o taint
+analysis acompanhando o dado até as saídas e um LLM que gera uma mensagem de segurança para o cidadão
+no dashboard.
 
-**Resultado:** ajuste no entendimento: o middleware não impede a entrada do dado pessoal; ele marca o
-dado e o mascara ou criptografa, e o que é bloqueado é a saída insegura.
+**Resultado:** entendimento ajustado: o middleware não impede a entrada do dado pessoal. Ele marca o
+dado e o mascara ou criptografa antes de log e banco; o que é bloqueado é a saída insegura (log, erro
+na tela e resposta HTTP sem autenticação).
 
 ## 2. Planejar o escopo
 
-**Pedido:** definir o ambiente da entrega (separado do protótipo e sem ligação com outras disciplinas),
-a stack, se seria preciso integrar com outra aplicação, o LLM a usar e a complexidade do projeto.
+**Objetivo:** definir o ambiente da entrega, a stack, a necessidade de integração com outra aplicação,
+o LLM e a complexidade do projeto.
 
-**Resultado:** mini-API do AJA em Python + FastAPI, ambiente próprio, dados fictícios, Claude via API e
-código no GitHub. Estimativa de complexidade média-baixa.
+**Resultado:** a equipe escolheu uma mini-API do AJA em Python + FastAPI, em ambiente próprio, sem
+ligação com as outras disciplinas, com dados fictícios, LLM acessado por API e código no GitHub.
+Complexidade estimada como média-baixa.
 
-**Pedido:** explicar como o sistema seria testado e se a chave da API poderia ficar no repositório.
+**Objetivo:** definir como o sistema seria testado e onde guardar a chave da API do LLM.
 
-**Resultado:** testes automatizados e auditoria rodando no ambiente de desenvolvimento; a chave fica só
-num arquivo `.env` fora do Git, com um verificador de segredos antes de cada commit.
+**Resultado:** testes automatizados e auditoria rodando no ambiente de desenvolvimento. A chave fica só
+num arquivo `.env` fora do Git, e o script `scripts/verificar_segredos.py` barra segredos e dados
+pessoais reais antes de cada commit.
 
-## 3. Construir a entrega
+## 3. Construir a API e o módulo de segurança
 
-**Pedido:** desenvolver o motor de PII, o taint analysis, a tradução via IA e o dashboard, com o
-contexto do projeto AJA no README (com base no README da entrega de IA & ML).
+**Objetivo:** desenvolver o motor de PII, o taint analysis, a tradução dos eventos via IA e o
+dashboard, com o contexto do AJA no README.
 
-**Resultado:** API com cadastro, login, relatos, tópicos e dossiê; motor de PII com regras por campo e
-por conteúdo; guardas de taint em log, erro, resposta HTTP, banco, dossiê, prompt do LLM e relato
-público; tradutor de eventos com mensagem padrão de reserva; dashboard com farol de Risco Cidadão;
-testes automatizados; script de auditoria; README.
+**Resultado:** API com cadastro, login, relatos, tópicos e dossiê em PDF, e um módulo de segurança com:
+- motor de PII (`app/pii/`) com regras por nome de campo e por conteúdo, validadores (dígito
+  verificador do CPF, RG, telefone e CEP com formato ou contexto) e máscaras;
+- dados pessoais no banco com criptografia Fernet, índice cego HMAC e senhas com scrypt;
+- taint analysis (`app/taint/`) que guarda o titular de cada dado e bloqueia vazamentos em log, erro,
+  resposta HTTP, banco, dossiê, prompt do LLM e relato público;
+- tradutor de eventos (`app/ia/tradutor.py`) que envia ao LLM só os metadados do evento, nunca o dado
+  pessoal, e usa uma mensagem padrão quando a chave não está configurada;
+- dashboard de Risco Cidadão (`app/static/`) com farol, índice de 0 a 100 e a mensagem traduzida;
+- 35 testes automatizados e o script de auditoria `auditoria/simular_ataques.py`, com 11 cenários.
 
-**Pedido:** perguntar qual framework seria usado no dashboard e no backend.
+**Objetivo:** definir o framework do dashboard e do backend.
 
-**Resultado:** FastAPI no backend e HTML, CSS e JavaScript puros no dashboard, servidos pela própria API,
-para rodar com um único comando.
+**Resultado:** FastAPI no backend e HTML, CSS e JavaScript puros no dashboard, servidos pela própria
+API, para rodar com um único comando.
 
 ## 4. Revisar o dashboard
 
-**Pedido:** deixar a interface com cores mais neutras (tons de preto, azul ainda predominante, sem tanto
-contraste entre as cores).
+**Objetivo:** deixar a interface com cores mais neutras (tons de preto, azul ainda predominante, sem
+tanto contraste entre as cores).
 
-**Resultado:** paleta grafite com azul só nos destaques; o contraste do botão principal foi corrigido
+**Resultado:** paleta grafite com azul só nos destaques. O contraste do botão principal foi corrigido
 para atender o WCAG AA.
 
-**Pedido:** responder se o dashboard é acessível, se o projeto usa banco de dados e o que as cores do
+**Objetivo:** confirmar se o dashboard é acessível, se o projeto usa banco de dados e o que as cores do
 farol significam.
 
-**Resultado:** verificação automática de acessibilidade sem violações; banco SQLite com os dados
-pessoais criptografados; explicação das faixas do farol.
+**Resultado:** verificação com axe-core sem violações (WCAG 2.1 A/AA), leitura em voz alta da mensagem
+e VLibras. Banco SQLite local, com os dados pessoais criptografados. Faixas do farol: verde até 29,
+amarelo de 30 a 69 e vermelho a partir de 70.
 
-**Pedido:** esclarecer se o farol conta pedidos, se vale para todos os usuários, se é requisito da
-entrega e pedir que ele seja explicado melhor no repositório, no PDF e no vídeo.
+**Objetivo:** entender se o farol conta pedidos, se vale para todos os usuários e se é requisito da
+entrega, e explicar melhor o farol no repositório, no PDF e no vídeo.
 
-**Resultado:** o farol mede eventos de segurança (não pedidos); cada cidadão vê o próprio farol e a
-equipe vê o geral; legenda e explicação no painel, no README, no PDF e no vídeo. A revisão também
-mostrou que eventos de rotina sozinhos levavam o farol ao vermelho, e o cálculo foi corrigido para que
-só tentativas de ataque cheguem ao vermelho.
+**Resultado:** o farol mede eventos de segurança dos últimos 10 minutos, não pedidos. Cada cidadão vê
+o farol dos eventos que envolvem os próprios dados, e a equipe vê o farol geral. O painel ganhou legenda
+das faixas, e o README, o PDF e o vídeo ganharam a explicação. A revisão mostrou que eventos de rotina
+sozinhos levavam o farol ao vermelho; o cálculo em `app/seguranca/risco.py` foi corrigido para que a
+rotina pare no amarelo e só tentativas de ataque cheguem ao vermelho, com um teste para garantir isso.
 
-## 5. Documentar
+## 5. Documentar a entrega
 
-**Pedido:** montar o PDF de documentação com as seções pedidas pelo professor (Source, Auditoria e
-Vídeo do Dashboard), com prints do código e das evidências.
+**Objetivo:** montar o PDF de documentação com as seções pedidas no documento adicional (Source,
+Auditoria e Vídeo do Dashboard), com prints claros do código e das evidências.
 
-**Resultado:** PDF com trechos reais do código, evidências da auditoria, testes, verificação de
-segredos, acessibilidade e quadros do dashboard.
-
-**Pedido:** retirar de todos os materiais qualquer menção à pontuação da atividade.
-
-**Resultado:** tabela de critérios sem valores no PDF e no README.
+**Resultado:** PDF de 22 páginas com trechos reais do código numerados, evidências da auditoria (11 de
+11 cenários bloqueados e varredura de log e banco sem dado pessoal em texto claro), testes, verificação
+de segredos, acessibilidade, explicação do farol e quadros do dashboard.
 
 ## 6. Produzir o vídeo do dashboard
 
-**Pedido:** preparar o roteiro de narração e definir estilo, fonte, paleta, duração e trilha do vídeo.
+**Objetivo:** criar um vídeo do dashboard em atividade, com roteiro de narração, unindo cenas animadas
+e a gravação real do painel.
 
-**Resultado:** roteiro em nove cenas; vídeo misto (abertura e encerramento animados com a gravação real
-do painel no meio), fonte IBM Plex Sans, paleta do painel e tom sóbrio, com a narração gravada pela
-equipe.
+**Resultado:** roteiro em nove cenas; abertura e encerramento animados e, no meio, a gravação do painel
+durante a auditoria, na fonte e na paleta do dashboard, com a narração gravada pela equipe.
 
-**Pedido:** cortar as tentativas repetidas de uma frase da narração e montar o vídeo.
+**Objetivo:** dar mais tempo ao trecho do painel e destacar a parte mencionada na narração.
 
-**Resultado:** primeira versão com a gravação real do painel durante a auditoria.
-
-**Pedido:** abaixar uma das músicas, inverter a ordem das faixas, aumentar as pausas no trecho do painel
-e destacar a parte mencionada na narração, escurecendo o restante da tela.
-
-**Resultado:** segunda versão, publicada no YouTube, com destaques, contornos e textos explicativos.
+**Resultado:** versão final de 3min23s, com contornos, textos explicativos e escurecimento do que não
+está sendo mencionado, publicada no YouTube como não listada.
 
 ## 7. Revisar e entregar
 
-**Pedido:** revisar tudo com cautela, dizer se a chave da API pode ser excluída e listar o que deve ser
-entregue.
+**Objetivo:** fazer uma revisão final, confirmar se a chave da API pode ser excluída e listar o que deve
+ser entregue.
 
-**Resultado:** teste do repositório do zero (clone novo, instalação limpa, sem chave), conferência do
-histórico do Git e do PDF; a chave pode ser revogada, porque o sistema funciona sem ela usando as
-mensagens padrão.
+**Resultado:** teste do repositório do zero. Foram conferidos:
+- clone novo, instalação limpa e configuração sem chave;
+- 35 testes aprovados e API, painel e documentação interativa respondendo;
+- auditoria com 11 de 11 cenários, usando as mensagens padrão;
+- histórico do Git sem chave e sem arquivo `.env`;
+- links do PDF e do README.
+
+A chave pode ser revogada, porque o sistema funciona sem ela. A entrega é o PDF de documentação e o
+link do repositório, enviados separadamente.

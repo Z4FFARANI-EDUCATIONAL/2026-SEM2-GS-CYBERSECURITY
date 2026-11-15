@@ -53,7 +53,6 @@ segurança que cobre as três partes da missão técnica e o dashboard.
 | Código-fonte | este repositório |
 | Auditoria do protótipo | [`auditoria/RELATORIO_AUDITORIA.md`](auditoria/RELATORIO_AUDITORIA.md) |
 | Vídeo do dashboard | [youtu.be/2f9h9YCno48](https://youtu.be/2f9h9YCno48) |
-| Prompts usados com IA | [`prompts.md`](prompts.md) |
 
 ```
  requisição ──► [1] Motor de PII ──► marca cada dado pessoal no contexto de taint (source)
