@@ -1,3 +1,5 @@
+![banner](./assets/banner.png)
+
 # AJA · Cybersecurity
 
 | Integrante | RM |
