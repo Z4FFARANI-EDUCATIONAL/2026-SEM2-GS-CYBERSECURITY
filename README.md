@@ -30,6 +30,10 @@ própria deficiência da pessoa, que é **dado pessoal sensível de saúde** pel
 relata uma barreira precisa confiar que a sua identidade não vai parar num log, numa tela de erro ou no
 documento enviado à Prefeitura.
 
+### Projeto principal
+
+[AJA](https://github.com/Z4ffarani/AJA): repositório principal do projeto.
+
 ## Ficha da CitizenTech
 
 | Campo | Descrição |
